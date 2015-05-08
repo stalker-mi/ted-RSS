@@ -126,6 +126,7 @@ package
 					addChild(scene1);
 				}
 				else {
+					if(my_video.flag_play==false) my_video.logo_pause.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 					my_video.nStream.pause();
 					my_video.nStream.seek(0);
 					my_video.vid.clear();

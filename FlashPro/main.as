@@ -1,35 +1,47 @@
-﻿package  {
-	import flash.display.MovieClip;
+package
+{
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.display.Sprite;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
-	[Frame(factoryClass="Preloader")]
-	public class main extends MovieClip {
+
+	/**
+	 * ...
+	 * @author Vovik
+	 */
+	[Frame(factoryClass = "Preloader")]
+	[SWF(width="480", height="800")]
+	public class Main extends Sprite 
+	{
+		private var scene1:Sprite;
+		private var scene2:Sprite;
+		private var sceneInfo:Sprite;
+		private var my_items:Sprite;
+		private var my_video:TedVideo;
+		private var my_head:Head;
+		private var myScrollPane:MyPane;
 			
-			private var scene1:Sprite;
-			private var scene2:Sprite;
-			private var sceneInfo:Sprite;
-			private var my_items:Sprite;
-			private var my_video:TedVideo;
-			private var my_head:Head;
-			private var myScrollPane:MyPane;
-			
-		public function main()  {
+		public function Main() 
+		{
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
 		}
+
 		private function init(e:Event = null):void 
 		{
+			removeEventListener(Event.ADDED_TO_STAGE, init);
+			
 			init_scene1();
 			addChild(scene1);
 			init_items();
 			init_scene2();
 			init_sceneInfo();
+			
 		}
-		
+
 		private function init_scene1():void 
 		{
 			scene1=new Sprite();
@@ -114,6 +126,7 @@
 					addChild(scene1);
 				}
 				else {
+					if(my_video.flag_play==false) my_video.logo_pause.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 					my_video.nStream.pause();
 					my_video.nStream.seek(0);
 					my_video.vid.clear();
@@ -138,7 +151,8 @@
 			}
 			
 		}
-
+		
+		
 	}
-	
+
 }
