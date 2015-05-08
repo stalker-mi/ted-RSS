@@ -5,7 +5,6 @@
 	import flash.display.Sprite;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-
 	
 	[Frame(factoryClass="Preloader")]
 	public class main extends MovieClip {
@@ -16,6 +15,7 @@
 			private var my_items:Sprite;
 			private var my_video:TedVideo;
 			private var my_head:Head;
+			private var myScrollPane:MyPane;
 			
 		public function main()  {
 			if (stage) init();
@@ -38,10 +38,17 @@
 			scene1.addChild(my_head);
 			my_head.logo_info.addEventListener(MouseEvent.CLICK, logo_click );
 			my_items=new Sprite();
-			my_items.x=18;
-			my_items.y=147;
+			myScrollPane = new MyPane();
+			myScrollPane.setSize(470,650);
+			addChild(myScrollPane);
+			myScrollPane.x=10;
+			myScrollPane.y=147;
+			my_head.loading_txt.x=209;
+			my_head.loading_txt.y=147;
 			my_items.addChild(my_head.loading_txt);
 			scene1.addChild(my_items);
+			scene1.addChild(myScrollPane);
+			
 		}
 		
 		private function init_scene2():void {
@@ -83,13 +90,14 @@
 		{
 			var xml:XML = new XML(e.target.data);
 			my_items.removeChild(my_items.getChildAt(0));
-			var max_i:int=4;
+			var max_i:int=100;
 			for(var i:int=0;i<max_i;i++){
 				var my_item:Item=new Item(xml.channel.item[i]);
 				my_item.addEventListener(MouseEvent.CLICK, item_click);
 				my_item.y=my_item.height*i+20*i;
 				my_items.addChild(my_item);
 			}
+			myScrollPane.source = my_items;
 		}
 		
 		private function item_click(e:MouseEvent):void {

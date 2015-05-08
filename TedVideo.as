@@ -7,6 +7,7 @@
 	import flash.display.Bitmap;
 	import flash.events.MouseEvent;
 	import fl.events.SliderEvent;
+	import fl.controls.ProgressBar;
 	import fl.controls.ProgressBarMode;
 	import flash.media.SoundTransform;
 	import flash.text.TextField;
