@@ -13,7 +13,7 @@
 		public var logo_info:Sprite;
 		public var logo_back:Sprite;
 
-		public function Head(back_button:Boolean=false)  {
+		public function Head()  {
 			var sh1:Shape=new Shape();
 			sh1.graphics.beginFill(0x66CCFF);
 			sh1.graphics.drawRect(0, 0, 480, 100);
