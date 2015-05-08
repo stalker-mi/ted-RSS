@@ -22,8 +22,7 @@
 		public var myTimer:Timer;
 		public var vid:Video;
 		public var flag_play:Boolean;
-		public var logo_pause:Sprite
-		private var positionBar:MyProgress;
+		public var logo_pause:Sprite;
 		private var positionLabel:TextField;
 		private var totalLabel:TextField;
 		private var meta:Object;
@@ -54,14 +53,16 @@
 			init_buttons();
 		}
 		
-		private function init_buttons():void{
+		private function init_buttons():void {
+			
+			var MyControls:Sprite = new Sprite();
 			var my_pause:Bitmap=new Bitmap(new BPause());
 			var my_play:Bitmap=new Bitmap(new BPlay());
 			logo_pause=new Sprite();
 			logo_pause.x=100;
-			logo_pause.y=450;
+			logo_pause.y=520;
 			logo_pause.addChild(my_pause);
-			addChild(logo_pause);
+			MyControls.addChild(logo_pause);
 			flag_play=true;
 			logo_pause.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
 										nStream.togglePause();
@@ -89,45 +90,42 @@
 										  nStream.soundTransform=volumeTransform; 
 										  });
 			volumeSlider.x=160;
-			volumeSlider.y=475;
+			volumeSlider.y=545;
 			volumeSlider.width=50;
-			addChild(volumeSlider);
+			MyControls.addChild(volumeSlider);
 			
-			/*positionBar=new MyProgress();
-			positionBar.mode = ProgressBarMode.MANUAL;
-			positionBar.source=nStream;
-			positionBar.x=220;
-			positionBar.y=415;
-			positionBar.width=200;
-			positionBar.height=20;
-			addChild(positionBar);
-			*/
 			var barBg:Sprite = new Sprite();
 			barBg.graphics.beginFill(0xFFFFFF);
 			barBg.graphics.lineStyle(0, 0xAAAAAA);
-			barBg.graphics.drawRect(220, 465, 200, 20);
+			barBg.graphics.drawRect(220, 535, 200, 20);
             barBg.graphics.endFill();
-			addChild(barBg);
+			MyControls.addChild(barBg);
 			
 			var barLoading:Sprite = new Sprite();
 			barLoading.buttonMode = true;
 			barLoading.graphics.beginFill(0x66CCFF);
-			barLoading.graphics.drawRect(220, 465, 200, 20);
+			barLoading.graphics.drawRect(220, 535, 200, 20);
             barLoading.graphics.endFill();
-			addChild(barLoading);
+			MyControls.addChild(barLoading);
 			barLoading.addEventListener(MouseEvent.MOUSE_DOWN, function():void {
 				nStream.togglePause();
 				var position:Number = (barLoading.mouseX-220) * barLoading.scaleX / barLoading.width;
-				nStream.seek(position * meta.duration);
+				try {
+					if(position >= 1) position = 1;
+					nStream.seek(int(position * meta.duration));
+				}
+				catch(error:Error) {
+					trace(error);
+				}
 				nStream.togglePause();
 				barPlaying.scaleX = position <= 1 ? position : 1;
 			});
 			
 			barLoadingMask = new Sprite();
 			barLoadingMask.graphics.beginFill(0xFF0000);
-			barLoadingMask.graphics.drawRect(220, 465, 200, 20);
+			barLoadingMask.graphics.drawRect(220, 535, 200, 20);
             barLoadingMask.graphics.endFill();
-			addChild(barLoadingMask);
+			MyControls.addChild(barLoadingMask);
 			
 			barLoading.mask = barLoadingMask;
 			
@@ -137,35 +135,49 @@
 			barPlaying.graphics.drawRect(0, 0, 200, 20);
             barPlaying.graphics.endFill();
 			barPlaying.x = 220;
-			barPlaying.y = 465;
-			addChild(barPlaying);
+			barPlaying.y = 535;
+			MyControls.addChild(barPlaying);
 			
 			barLoadingMask.scaleX = 0;
 			barPlaying.scaleX = 0;
 			
 			positionLabel=new TextField();
 			positionLabel.x=220;
-			positionLabel.y=482;
+			positionLabel.y=552;
 			positionLabel.mouseEnabled = false;
 			
-			addChild(positionLabel);
+			MyControls.addChild(positionLabel);
 			
 			totalLabel=new TextField();
 			totalLabel.x=395;
-			totalLabel.y=482;
+			totalLabel.y=552;
 			totalLabel.mouseEnabled =false;
-			addChild(totalLabel);
+			MyControls.addChild(totalLabel);
+			
+			addChild(MyControls);
 			
 			var my_full:Bitmap=new Bitmap(new fullScreen());
-			var logo_full:Sprite=new Sprite();
-			logo_full.x=150;
-			logo_full.y=510;
-			logo_full.addChild(my_full);
-			addChild(logo_full);
-			logo_full.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
-									    var screenRectangle:Rectangle = new Rectangle(vid.x, vid.y, vid.width, vid.height); 
-          							    stage.fullScreenSourceRect = screenRectangle; 
-            							stage.displayState = StageDisplayState.FULL_SCREEN;  
+			var small_full:Sprite=new Sprite();
+			small_full.x=425;
+			small_full.y = 525;
+			small_full.scaleX = 0.2;
+			small_full.scaleY = 0.2;
+			small_full.addChild(my_full);
+			MyControls.addChild(small_full);
+			MyControls.x = -40;
+			
+			small_full.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+										if(stage.displayState == StageDisplayState.NORMAL){
+											var screenRectangle:Rectangle = new Rectangle(vid.x, vid.y, vid.width, vid.height);
+											MyControls.y = -60;
+											stage.fullScreenSourceRect = screenRectangle; 
+											stage.displayState = StageDisplayState.FULL_SCREEN;
+											
+										}
+										else {
+											MyControls.y = 0;
+											stage.displayState = StageDisplayState.NORMAL; 
+										}
 									   });
 			
 			myTimer = new Timer(1000);
@@ -176,15 +188,14 @@
 		private function metadataHandler(metadataObj:Object):void 
 		{ 
 			meta = metadataObj;
-			vid.width = meta.width; 
-			vid.height = meta.height; 
+			vid.width = 480; 
+			vid.height = 360; 
 			var seconds:String=(int(meta.duration % 60)).toString();
 			if(int(seconds)<10) seconds="0"+int(meta.duration % 60);
 			totalLabel.text = int(meta.duration/ 60) + ":" + seconds; 
 		}
 		private function timerHandler(event:TimerEvent):void 
 		{ 
-			//positionBar.setProgress(nStream.time, meta.duration);
 			barLoadingMask.scaleX = nStream.bytesLoaded / nStream.bytesTotal <= 1 ? nStream.bytesLoaded / nStream.bytesTotal : 1;
 			barPlaying.scaleX = nStream.time/meta.duration <= 1 ? nStream.time/meta.duration : 1;
 			var seconds:String=(int(nStream.time % 60)).toString();
