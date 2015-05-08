@@ -22,6 +22,7 @@
 		public var vid:Video;
 		private var positionBar:MyProgress;
 		private var positionLabel:TextField;
+		private var totalLabel:TextField;
 		private var meta:Object;
 		
 		public function TedVideo() {
@@ -94,10 +95,18 @@
 			positionBar.width=200;
 			positionBar.height=20;
 			addChild(positionBar);
+			
 			positionLabel=new TextField();
 			positionLabel.x=220;
 			positionLabel.y=430;
+			positionLabel.selectable=false;
 			addChild(positionLabel);
+			
+			totalLabel=new TextField();
+			totalLabel.x=395;
+			totalLabel.y=430;
+			positionLabel.selectable=false;
+			addChild(totalLabel);
 			
 			var my_full:Bitmap=new Bitmap(new fullScreen());
 			var logo_full:Sprite=new Sprite();
@@ -118,12 +127,17 @@
 		
 		private function metadataHandler(metadataObj:Object):void 
 		{ 
-			meta = metadataObj;  
+			meta = metadataObj;
+			var seconds=int(meta.duration % 60);
+			if(seconds<10) seconds="0"+int(meta.duration % 60);
+			totalLabel.text = int(meta.duration/ 60) + ":" + seconds; 
 		}
 		private function timerHandler(event:TimerEvent):void 
 		{ 
-			positionBar.setProgress(nStream.time, meta.duration); 
-       		positionLabel.text = int(nStream.time.toFixed(1)) + " of " + int(meta.duration.toFixed(1)); 
+			positionBar.setProgress(nStream.time, meta.duration);
+			var seconds=int(nStream.time % 60);
+			if(seconds<10) seconds="0"+int(nStream.time % 60);
+       		positionLabel.text = int(nStream.time / 60) + ":" + seconds;
 		}
 
 	}
