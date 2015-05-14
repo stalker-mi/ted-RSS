@@ -1,4 +1,4 @@
-package
+﻿package
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -6,7 +6,6 @@ package
 	import flash.display.Sprite;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	
 
 	/**
 	 * ...
@@ -23,6 +22,7 @@ package
 		private var my_video:TedVideo;
 		private var my_head:Head;
 		private var myScrollPane:MyPane;
+		private var f_click=true;
 			
 		public function Main() 
 		{
@@ -51,8 +51,12 @@ package
 			my_head.logo_info.addEventListener(MouseEvent.CLICK, logo_click );
 			my_items=new Sprite();
 			myScrollPane = new MyPane();
+			myScrollPane.scrollDrag=true;
 			myScrollPane.setSize(470,650);
 			addChild(myScrollPane);
+			myScrollPane.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent):void{
+										  if(e.clickCount==0) f_click=false; else f_click=true;
+										  });
 			myScrollPane.x=10;
 			myScrollPane.y=147;
 			my_head.loading_txt.x=209;
@@ -102,7 +106,7 @@ package
 		{
 			var xml:XML = new XML(e.target.data);
 			my_items.removeChild(my_items.getChildAt(0));
-			var max_i:int=100;
+			var max_i:int=99;
 			for(var i:int=0;i<max_i;i++){
 				var my_item:Item=new Item(xml.channel.item[i]);
 				my_item.addEventListener(MouseEvent.CLICK, item_click);
@@ -113,11 +117,13 @@ package
 		}
 		
 		private function item_click(e:MouseEvent):void {
-			removeChild(scene1);
-			addChild(scene2);
-			my_video.nStream.play(e.currentTarget.video_url);
-			my_video.myTimer.start();
+			if(f_click){
+				removeChild(scene1);
+				addChild(scene2);
+				my_video.nStream.play(e.currentTarget.video_url);
+				my_video.myTimer.start();
 			}
+		}
 			
 		private function logo_click(e:MouseEvent):void {
 			if(e.currentTarget.name=="logo_back"){
@@ -127,6 +133,7 @@ package
 				}
 				else {
 					if(my_video.flag_play==false) my_video.logo_pause.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+					if(my_video.flag_full==true) my_video.small_full.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 					my_video.nStream.pause();
 					my_video.nStream.seek(0);
 					my_video.vid.clear();
